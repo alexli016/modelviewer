@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>
+        Medical Expansion in Phoenix
+    </title>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: sans-serif;
+        }
+
+        .intro {
+            height: 100vh;
+            z-index: 0;
+        }
+
+        .intro video {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .intro h1 {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            color: white;
+            /* outline: 1px dashed red; */
+        }
+
+        .intro p {
+            position: absolute;
+            top: 70%;
+            margin-left: 5vw;
+            /* transform: translate(-50%, -50%); */
+            font-size: 50px;
+            color: white;
+            background-color: #00aaff;
+            border-radius: 5px;
+            padding: 5px 5px 5px 5px;
+            border: white solid;
+            opacity: 0;
+        }
+
+    </style>
+    <!--Start of external scripts-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.2/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/ScrollMagic.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/animation.gsap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/debug.addIndicators.js"></script>
+    <!--End of external scripts-->
+</head>
+
+<body>
+    <!--START OF VIDEO-->
+    <div class="intro">
+        <h1>Medical Expansion in Phoenix</h1>
+        <video type="video/mp4" preload="auto">
+            <source src="https://alexli016.github.io/modelviewer/Wexford2Creighton_mobile_0710.mp4">
+        </video>
+        <p id="overlayText01">This is Wexford Science, located at 850 N 5th Street, Phoenix, Arizona</p>
+        <p id="overlayText02">This is Creighton University Phoenix Campus, located at <br>3100 North Central Avenue
+            Phoenix, Arizona</p>
+    </div>
+    <!--END OF VIDEO-->
+
+    <section>
+    </section>
+
+    <script>
+        const intro = document.querySelector('.intro');
+        const video = intro.querySelector('video');
+        const text = intro.querySelector('h1');
+        const overlayTexts = intro.querySelector("#overlayText01");
+        const overlayTexts02 = intro.querySelector("#overlayText02");
+
+        // init controller
+        let controller = new ScrollMagic.Controller();
+
+        // build video scene
+        let scene = new ScrollMagic.Scene({
+            triggerElement: intro,
+            triggerHook: 0,
+            offset: 0,
+            duration: 10000
+        })
+            //.addIndicators()
+            .setPin(intro)
+            .addTo(controller);
+
+        //Text Animation
+        const textAnim = TweenMax.fromTo(text, 3, { opacity: 1 }, { opacity: 0 });
+
+        let scene2 = new ScrollMagic.Scene({
+            duration: 800,
+            triggerElement: intro,
+            triggerHook: 0
+        })
+            .setTween(textAnim)
+            .addTo(controller);
+
+
+        //Overlay Text Animation - Wexford
+        const overlayTextsAnim = TweenMax.fromTo(overlayTexts, 3, { opacity: 0 }, { opacity: 1 });
+        const overlayTextsAnim02 = TweenMax.fromTo(overlayTexts, 3, { opacity: 1 }, { opacity: 0 });
+
+        //Overlay Text Animation - Creighton
+        const overlayTextsAnim04 = TweenMax.fromTo(overlayTexts02, 3, { opacity: 1 }, { opacity: 0 });
+        const overlayTextsAnim03 = TweenMax.fromTo(overlayTexts02, 3, { opacity: 0 }, { opacity: 1 });
+
+        //************WEXFORD OVERLAY TEXT FADE-IN******************
+        let scene3 = new ScrollMagic.Scene({
+            duration: 800,
+            triggerElement: intro,
+            triggerHook: 0,
+            offset: -1
+        })
+            //.addIndicators()
+            .setTween(overlayTextsAnim)
+            .addTo(controller);
+
+        //************WEXFORD OVERLAY TEXT FADE-OUT******************
+        let scene4 = new ScrollMagic.Scene({
+            duration: 800,
+            triggerElement: intro,
+            triggerHook: 0,
+            offset: 1200
+        })
+            //.addIndicators()
+            .setTween(overlayTextsAnim02)
+            .addTo(controller);
+
+        //************CREIGHTON OVERLAY TEXT FADE-IN******************
+        let scene5 = new ScrollMagic.Scene({
+            offset: 5670,
+            duration: 800,
+            triggerHook: 0,
+        })
+            .setTween(overlayTextsAnim03)
+            .addTo(controller)
+        //.addIndicators('Creighton');
+
+        //************CREIGHTON OVERLAY TEXT FADE-OUT******************
+        let scene6 = new ScrollMagic.Scene({
+            offset: 9000,
+            duration: 800,
+            triggerHook: 0,
+        })
+            .setTween(overlayTextsAnim04)
+            .addTo(controller)
+        //.addIndicators('Creighton');
+
+
+        //Creating Video Animation
+        let accelamount = 0.3;
+        // to decrease delay effect, increase the number
+        let scrollpos = 0;
+        let delay = 0;
+        let frameRate = 30;
+
+        scene.on('update', e => {
+            scrollpos = e.scrollPos / 1000;
+            console.log("e.scrollPos / 1000 =" + e.scrollPos / 1000);
+            console.log("scrollPos =" + e.scrollPos);
+            //e.scrollPos comes from Scroll Magic and it is connect with the duration
+        });
+
+        setInterval(() => {
+            delay += (scrollpos - delay) * accelamount;
+            console.log(scrollpos, delay);
+
+            video.currentTime = delay;
+            console.log('video current time =' + video.currentTime);
+        }, 1000 / frameRate);
+        //video.currentTime indicates the position for the playback of the video, in seconds
+
+    </script>
+</body>
+
+</html>
